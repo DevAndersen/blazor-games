@@ -1,0 +1,46 @@
+﻿@page "/lobby/{GameId:int}"
+@using DevAndersen.BlazorGames.Core
+@implements IDisposable
+@inject IIdentityService identityService
+@inject GameLobby gameLobby
+@inject NavigationManager navigationManager
+
+<PageTitle>Lobby</PageTitle>
+<h3>Lobby</h3>
+
+<div>Finding a match...</div>
+
+@code
+{
+    [Parameter]
+    public int GameId { get; set; }
+
+    public PlayerIdentity? Identity { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        gameLobby.JoinGame += JoinGame;
+
+        GameIdentity gameIdentity = (GameIdentity)GameId;
+        Identity = await identityService.LoadIdentityAsync();
+        gameLobby.AddPlayerToQueue(Identity.Id, gameIdentity);
+    }
+
+    private void JoinGame(Guid playerId, GameDefinition gameDefinition)
+    {
+        if (playerId == Identity?.Id)
+        {
+            navigationManager.NavigateTo("https://google.com", true);
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Identity != null)
+        {
+            gameLobby.RemovePlayerFromQueue(Identity.Id);
+        }
+    }
+}

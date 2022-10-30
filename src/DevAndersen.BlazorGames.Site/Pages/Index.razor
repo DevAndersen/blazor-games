@@ -1,14 +1,31 @@
 ﻿@page "/"
+@inject IIdentityService identityService
 
 <PageTitle>Blazor Games</PageTitle>
 
 <h1 class="text-center user-select-none">Blazor Games</h1>
 
-<div class="container-lg pt-4 d-flex flex-wrap justify-content-center">
-    <div class="col-12 col-x col-sm-6 col-md-4 p-4">
-        <div class="p-4 text-center h-100 rounded-2 game-tile">
-            <div class="fs-1 fw-bold user-select-none">Game icon</div>
-            <div class="fs-3 fw-bold user-select-none">Game title</div>
+<div class="container-lg pt-4 d-flex flex-wrap">
+    @foreach (GameDefinition gameDefinition in GameDefinition.GameDefinitions)
+    {
+        <div class="col-12 col-sm-6 col-md-4 p-4 flex-fill">
+            <a href="/lobby/@((int)GameIdentity.RockPaperScissors)">
+                <div class="p-4 text-center btn btn-success h-100 w-100 rounded-2 game-tile">
+                    <div class="fs-1 fw-bold user-select-none">@gameDefinition.TextIcon</div>
+                    <div class="fs-3 fw-bold user-select-none">@gameDefinition.Name</div>
+                </div>
+            </a>
         </div>
-    </div>
+    }
 </div>
+
+@code
+{
+    public PlayerIdentity? Identity { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        Identity = await identityService.LoadIdentityAsync();
+    }
+}
