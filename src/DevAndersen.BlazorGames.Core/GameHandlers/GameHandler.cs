@@ -12,13 +12,16 @@ public abstract class GameHandler
 
 	public List<(string Message, PlayerIdentity Sender)> Chat { get; }
 
-	public GameHandler(IEnumerable<Guid> playerIds)
+    public UpdateNotifier UpdateNotifier { get; }
+
+    public GameHandler(IEnumerable<Guid> playerIds)
 	{
 		PlayerIds = playerIds;
 		GameId = Guid.NewGuid();
 		Players = new Dictionary<Guid, PlayerIdentity>();
 		Chat = new List<(string Message, PlayerIdentity Sender)>();
-	}
+		UpdateNotifier = new UpdateNotifier();
+    }
 
 	public void JoinGame(PlayerIdentity playerIdentity)
 	{

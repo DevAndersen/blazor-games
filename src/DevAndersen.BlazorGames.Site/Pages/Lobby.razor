@@ -11,12 +11,12 @@
 
 @code
 {
+    [Parameter]
+    public int GameId { get; set; }
+
     public override string PageTitle => "Lobby";
 
     private string GameName => GameDefinition.GetGameDefinition((GameIdentity)GameId)?.Name ?? $"Unnamed game {GameId}";
-
-    [Parameter]
-    public int GameId { get; set; }
 
     public PlayerIdentity? Identity { get; set; }
 

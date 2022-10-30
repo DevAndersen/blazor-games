@@ -1,4 +1,4 @@
-﻿@page "/games/RockPaperScissors"
+﻿@page "/games/{GameId:int}"
 @using DevAndersen.BlazorGames.Core.GameHandlers
 @using DevAndersen.BlazorGames.Site.ViewExtensions
 @inherits BasePage
@@ -15,11 +15,14 @@
 
 @code
 {
-    public override string PageTitle => GameDefinition.GetGameDefinition(GameIdentity.RockPaperScissors)?.Name ?? string.Empty;
+    [Parameter]
+    public int GameId { get; set; }
+
+    public override string PageTitle => GameDefinition.GetGameDefinition((GameIdentity)GameId)?.Name ?? string.Empty;
 
     public PlayerIdentity? Identity { get; set; }
 
-    public RockPaperScissorsHandler? Handler { get; set; }
+    public GameHandler? Handler { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -27,13 +30,26 @@
         if (firstRender)
         {
             Identity = await identityService.LoadIdentityAsync();
-            Handler = gameLobby.GetGameHandler<RockPaperScissorsHandler>(Identity.Id);
+            Handler = gameLobby.GetGameHandler<GameHandler>(Identity.Id);
+            if (Handler != null)
+            {
+                Handler.UpdateNotifier.OnUpdate += Update;
+            }
             StateHasChanged();
         }
     }
 
+    public void Update()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
     public void Dispose()
     {
-        Handler?.StopGame();
+        if (Handler != null)
+        {
+            Handler.UpdateNotifier.OnUpdate -= Update;
+            Handler.StopGame();
+        }
     }
 }

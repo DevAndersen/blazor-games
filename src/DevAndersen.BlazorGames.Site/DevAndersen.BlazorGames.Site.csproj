@@ -14,4 +14,8 @@
     <ProjectReference Include="..\DevAndersen.BlazorGames.Core\DevAndersen.BlazorGames.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Games\" />
+  </ItemGroup>
+
 </Project>

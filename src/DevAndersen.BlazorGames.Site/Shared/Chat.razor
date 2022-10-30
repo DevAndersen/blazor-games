@@ -54,6 +54,7 @@
         {
             Handler.SendChatMessage(ChatMessage, Identity);
             ChatMessage = string.Empty;
+            Handler.UpdateNotifier.Update();
         }
     }
 
