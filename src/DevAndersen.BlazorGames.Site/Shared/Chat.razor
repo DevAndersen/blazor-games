@@ -7,14 +7,19 @@
             @if (Handler != null)
             {
                 Guid? lastSenderId = null;
-                foreach ((string chatMessage, PlayerIdentity sender) in Handler.Chat)
+                foreach ((string[] messages, PlayerIdentity sender) in GetGroupedChatMessages())
                 {
                     <div class="py-1 col-12">
                         @if (lastSenderId != sender.Id)
                         {
                             <div class="opacity-50 @GetMessageSenderDirectionClasses(sender)">@GetSenderName(sender)</div>
                         }
-                        <div class="w-75 p-1 rounded border border-light border-opacity-25 @GetMessageDirectionClasses(sender)">@chatMessage</div>
+                        <div class="w-75 p-1 rounded border border-light border-opacity-25 @GetMessageDirectionClasses(sender)">
+                            @foreach (string message in messages)
+                            {
+                                <div>@message</div>
+                            }
+                        </div>
                     </div>
                     lastSenderId = sender.Id;
                 }
@@ -47,6 +52,34 @@
         {
             Handler.SendChatMessage(ChatMessage, Identity);
             ChatMessage = string.Empty;
+        }
+    }
+
+    public IEnumerable<(string[] messages, PlayerIdentity sender)> GetGroupedChatMessages()
+    {
+        if (Handler?.Chat.Count > 0)
+        {
+            int index = 0;
+            bool keepGoing = true;
+
+            while (keepGoing)
+            {
+                PlayerIdentity playerIdentity = Handler.Chat.Skip(index).FirstOrDefault().Sender;
+
+                string[] messages = Handler.Chat
+                    .Skip(index)
+                    .TakeWhile(x => x.Sender.Id == playerIdentity.Id)
+                    .Select(y => y.Message)
+                    .ToArray();
+
+                index += messages.Length;
+                if (index >= Handler.Chat.Count - 1)
+                {
+                    keepGoing = false;
+                }
+
+                yield return (messages, playerIdentity);
+            }
         }
     }
 
