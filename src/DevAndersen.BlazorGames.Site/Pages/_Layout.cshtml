@@ -15,7 +15,9 @@
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
-    @RenderBody()
+    <div class="d-flex flex-column h-100">
+        @RenderBody()
+    </div>
 
     <div id="blazor-error-ui">
         <environment include="Staging,Production">

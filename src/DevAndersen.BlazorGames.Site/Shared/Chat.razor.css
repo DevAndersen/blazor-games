@@ -1,0 +1,8 @@
+﻿.scroller
+{
+    width: 100%;
+    height: 100px;
+    overflow-y: scroll;
+    scrollbar-color: #888 #0000;
+    scrollbar-width: thin;
+}
