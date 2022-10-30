@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using System.ComponentModel
+@implements IDisposable
 @inject IIdentityService identityService
 
 <PageTitle>Blazor Games</PageTitle>
@@ -6,17 +8,23 @@
 <h1 class="text-center user-select-none">Blazor Games</h1>
 
 <div class="container-lg pt-4 d-flex flex-wrap">
-    @foreach (GameDefinition gameDefinition in GameDefinition.GameDefinitions)
+    @if (Identity != null)
     {
-        <div class="col-12 col-sm-6 col-md-4 p-4 flex-fill">
-            <a href="/lobby/@((int)GameIdentity.RockPaperScissors)">
-                <div class="p-4 text-center btn btn-success h-100 w-100 rounded-2 game-tile">
-                    <div class="fs-1 fw-bold user-select-none">@gameDefinition.TextIcon</div>
-                    <div class="fs-3 fw-bold user-select-none">@gameDefinition.Name</div>
-                </div>
-            </a>
-        </div>
+        <input @bind=Identity.Username type="text" class="form-control text-light" placeholder="Username" style="background-color: var(--bs-gray-dark)">
     }
+    <div class="container-fluid">
+        @foreach (GameDefinition gameDefinition in GameDefinition.GameDefinitions)
+        {
+            <div class="col-12 col-sm-6 col-md-4 p-4 flex-fill">
+                <a href="/lobby/@((int)gameDefinition.GameIdentity)">
+                    <div class="p-4 text-center btn btn-success h-100 w-100 rounded-2 game-tile">
+                        <div class="fs-1 fw-bold user-select-none">@gameDefinition.TextIcon</div>
+                        <div class="fs-3 fw-bold user-select-none">@gameDefinition.Name</div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
 </div>
 
 @code
@@ -29,6 +37,28 @@
         if (firstRender)
         {
             Identity = await identityService.LoadIdentityAsync();
+            Identity.PropertyChanged += PropertyChangedAction;
+            StateHasChanged();
+        }
+    }
+
+    private async void PropertyChangedAction(object? sender, PropertyChangedEventArgs args)
+    {
+        if (sender is PlayerIdentity identity)
+        {
+            if (args.PropertyName == nameof(Identity.Username))
+            {
+                await identityService.SaveIdentityAsync(identity);
+                StateHasChanged();
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Identity != null)
+        {
+            Identity.PropertyChanged -= PropertyChangedAction;
         }
     }
 }
