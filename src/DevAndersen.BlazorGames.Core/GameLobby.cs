@@ -1,14 +1,18 @@
-﻿namespace DevAndersen.BlazorGames.Core
+﻿using DevAndersen.BlazorGames.Core.GameHandlers;
+
+namespace DevAndersen.BlazorGames.Core
 {
     public class GameLobby
     {
-        public event Action<Guid, GameDefinition> JoinGame = default!;
+        public event Action<IEnumerable<Guid>, GameDefinition> JoinGame = default!;
 
         private readonly Dictionary<Guid, GameDefinition> queue;
+        private readonly List<GameHandler> gameHandlers;
 
         public GameLobby()
         {
             queue = new Dictionary<Guid, GameDefinition>();
+            gameHandlers = new List<GameHandler>();
         }
 
         public void AddPlayerToQueue(Guid playerId, GameIdentity gameIdentity)
@@ -17,7 +21,7 @@
             if (gameDefinition != null)
             {
                 queue[playerId] = gameDefinition;
-                Update();
+                UpdateQueue();
             }
         }
 
@@ -26,7 +30,30 @@
             queue.Remove(playerId);
         }
 
-        public void Update()
+        public bool StartGame(GameDefinition gameDefinition, IEnumerable<Guid> playerIds)
+        {
+            GameHandler? handler = gameDefinition.GameIdentity switch
+            {
+                GameIdentity.RockPaperScissors => new RockPaperScissorsHandler(playerIds),
+                _ => null,
+            };
+
+            if (handler == null)
+            {
+                return false;
+            }
+
+            gameHandlers.Add(handler);
+            return true;
+        }
+
+        public void StopGame(GameHandler handler)
+        {
+            handler.StopGame();
+            gameHandlers.Remove(handler);
+        }
+
+        public void UpdateQueue()
         {
             // Groups players based on the games they want to play, ensuring there are enough in each group to start the game.
             IEnumerable<IEnumerable<Guid>> groups = queue
@@ -39,11 +66,13 @@
             {
                 if (group.Any())
                 {
-                    var gameIdentity = queue[group.First()];
+                    GameDefinition gameDefinition = queue[group.First()];
 
-                    foreach (Guid playerId in group)
+                    bool gameCreated = StartGame(gameDefinition, group);
+
+                    if (gameCreated)
                     {
-                        JoinGame.Invoke(playerId, gameIdentity);
+                        JoinGame.Invoke(group, gameDefinition);
                     }
                 }
             }

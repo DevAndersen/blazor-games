@@ -28,11 +28,11 @@
         gameLobby.AddPlayerToQueue(Identity.Id, gameIdentity);
     }
 
-    private void JoinGame(Guid playerId, GameDefinition gameDefinition)
+    private void JoinGame(IEnumerable<Guid> playerId, GameDefinition gameDefinition)
     {
-        if (playerId == Identity?.Id)
+        if (Identity != null && Identity.Id != Guid.Empty && playerId.Contains(Identity.Id))
         {
-            navigationManager.NavigateTo("https://google.com", true);
+            navigationManager.NavigateTo(gameDefinition.Page, true);
         }
     }
 
