@@ -26,6 +26,9 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        Identity = await identityService.LoadIdentityAsync();
+        if (firstRender)
+        {
+            Identity = await identityService.LoadIdentityAsync();
+        }
     }
 }

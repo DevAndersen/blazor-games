@@ -1,8 +1,91 @@
 ﻿@page "/games/RockPaperScissors"
+@using DevAndersen.BlazorGames.Core.GameHandlers
+@implements IDisposable
+@inject IIdentityService identityService
+@inject GameLobby gameLobby
 
-<h3>RockPaperScissors</h3>
+<PageTitle>Rock Paper Scissors</PageTitle>
+<h3>Rock Paper Scissors</h3>
+
+<div class="container-lg pt-4 d-flex flex-wrap bg-danger">
+    <div class="col-12 col-sm-8 bg-warning">Game view goes here</div>
+    <div class="col-12 col-sm-4 px-2">
+        <div class="bg-dark rounded-1 border">
+            <div class="d-flex flex-column" style="height: 200px">
+                <div class="p-1 text-center fw-bold border-bottom">Chat</div>
+                <div class="p-2 flex-fill d-flex flex-column">
+                    @if (Handler != null)
+                    {
+                        Guid? lastSender = null;
+                        foreach (var item in Handler.Chat)
+                        {
+                            bool isSenderSelf = item.Sender.Id == Identity?.Id;
+                            string messageDirectionClasses = isSenderSelf
+                            ? "bg-success"
+                            : "bg-primary float-end";
+
+                            string messageSenderDirectionClasses = isSenderSelf
+                            ? ""
+                            : "text-end";
+
+                            <div class="py-1 col-12">
+                                @if(lastSender != item.Sender.Id)
+                                {
+                                    string senderString = isSenderSelf
+                                    ? "You"
+                                    : item.Sender.Username ?? item.Sender.Id.ToString();
+
+                                    <div class="opacity-50 @messageSenderDirectionClasses">@senderString</div>
+                                }
+                                <div class="w-75 p-1 rounded border border-light border-opacity-25 @messageDirectionClasses">@item.Message</div>
+                            </div>
+                            lastSender = item.Sender.Id;
+                        }
+                    }
+                </div>
+                <div class="d-flex py-1 border-top">
+                    <div class="px-1 flex-fill">
+                        <input @bind=ChatMessage type="text" class="form-control text-light" style="background-color: var(--bs-gray-dark)">
+                    </div>
+                    <div class="px-1">
+                        <button @onclick=SendChatMessage class="btn btn-secondary">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code
 {
+    public PlayerIdentity? Identity { get; set; }
 
+    public RockPaperScissorsHandler? Handler { get; set; }
+
+    public string ChatMessage { get; set; } = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            Identity = await identityService.LoadIdentityAsync();
+            Handler = gameLobby.GetGameHandler<RockPaperScissorsHandler>(Identity.Id);
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        Handler?.StopGame();
+    }
+
+    public void SendChatMessage()
+    {
+        if (!string.IsNullOrWhiteSpace(ChatMessage) && Handler != null)
+        {
+            Handler.SendChatMessage(ChatMessage, Identity);
+            ChatMessage = string.Empty;
+        }
+    }
 }

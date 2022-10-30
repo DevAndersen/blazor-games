@@ -21,11 +21,13 @@
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        gameLobby.JoinGame += JoinGame;
-
-        GameIdentity gameIdentity = (GameIdentity)GameId;
-        Identity = await identityService.LoadIdentityAsync();
-        gameLobby.AddPlayerToQueue(Identity.Id, gameIdentity);
+        if (firstRender)
+        {
+            gameLobby.JoinGameEvent += JoinGame;
+            GameIdentity gameIdentity = (GameIdentity)GameId;
+            Identity = await identityService.LoadIdentityAsync();
+            gameLobby.AddPlayerToQueue(Identity.Id, gameIdentity);
+        }
     }
 
     private void JoinGame(IEnumerable<Guid> playerId, GameDefinition gameDefinition)

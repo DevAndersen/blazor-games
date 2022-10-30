@@ -4,7 +4,7 @@ namespace DevAndersen.BlazorGames.Core
 {
     public class GameLobby
     {
-        public event Action<IEnumerable<Guid>, GameDefinition> JoinGame = default!;
+        public event Action<IEnumerable<Guid>, GameDefinition> JoinGameEvent = default!;
 
         private readonly Dictionary<Guid, GameDefinition> queue;
         private readonly List<GameHandler> gameHandlers;
@@ -14,6 +14,8 @@ namespace DevAndersen.BlazorGames.Core
             queue = new Dictionary<Guid, GameDefinition>();
             gameHandlers = new List<GameHandler>();
         }
+
+        #region Queue
 
         public void AddPlayerToQueue(Guid playerId, GameIdentity gameIdentity)
         {
@@ -28,29 +30,6 @@ namespace DevAndersen.BlazorGames.Core
         public void RemovePlayerFromQueue(Guid playerId)
         {
             queue.Remove(playerId);
-        }
-
-        public bool StartGame(GameDefinition gameDefinition, IEnumerable<Guid> playerIds)
-        {
-            GameHandler? handler = gameDefinition.GameIdentity switch
-            {
-                GameIdentity.RockPaperScissors => new RockPaperScissorsHandler(playerIds),
-                _ => null,
-            };
-
-            if (handler == null)
-            {
-                return false;
-            }
-
-            gameHandlers.Add(handler);
-            return true;
-        }
-
-        public void StopGame(GameHandler handler)
-        {
-            handler.StopGame();
-            gameHandlers.Remove(handler);
         }
 
         public void UpdateQueue()
@@ -72,10 +51,43 @@ namespace DevAndersen.BlazorGames.Core
 
                     if (gameCreated)
                     {
-                        JoinGame.Invoke(group, gameDefinition);
+                        JoinGameEvent.Invoke(group, gameDefinition);
                     }
                 }
             }
         }
+
+        #endregion
+
+        #region Game
+
+        public bool StartGame(GameDefinition gameDefinition, IEnumerable<Guid> playerIds)
+        {
+            GameHandler? handler = gameDefinition.GameIdentity switch
+            {
+                GameIdentity.RockPaperScissors => new RockPaperScissorsHandler(playerIds),
+                _ => null,
+            };
+
+            if (handler == null)
+            {
+                return false;
+            }
+
+            gameHandlers.Add(handler);
+            return true;
+        }
+
+        public T? GetGameHandler<T>(Guid playerId) where T : GameHandler
+        {
+            return gameHandlers.FirstOrDefault(x => x.PlayerIds.Contains(playerId)) as T;
+        }
+
+        public void StopGame(GameHandler handler)
+        {
+            gameHandlers.Remove(handler);
+        }
+
+        #endregion
     }
 }
