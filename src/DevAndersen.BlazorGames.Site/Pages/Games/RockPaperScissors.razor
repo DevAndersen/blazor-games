@@ -1,11 +1,10 @@
 ﻿@page "/games/RockPaperScissors"
 @using DevAndersen.BlazorGames.Core.GameHandlers
+@using DevAndersen.BlazorGames.Site.ViewExtensions
+@inherits BasePage
 @implements IDisposable
 @inject IIdentityService identityService
 @inject GameLobby gameLobby
-
-<PageTitle>Rock Paper Scissors</PageTitle>
-<h3>Rock Paper Scissors</h3>
 
 <div class="container-lg pt-4 d-flex flex-wrap bg-danger">
     <div class="col-12 col-sm-8 bg-warning">Game view goes here</div>
@@ -16,6 +15,8 @@
 
 @code
 {
+    public override string PageTitle => GameDefinition.GetGameDefinition(GameIdentity.RockPaperScissors)?.Name ?? string.Empty;
+
     public PlayerIdentity? Identity { get; set; }
 
     public RockPaperScissorsHandler? Handler { get; set; }

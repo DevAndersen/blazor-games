@@ -1,11 +1,9 @@
 ﻿@page "/"
+@using DevAndersen.BlazorGames.Site.ViewExtensions
 @using System.ComponentModel
+@inherits BasePage
 @implements IDisposable
 @inject IIdentityService identityService
-
-<PageTitle>Blazor Games</PageTitle>
-
-<h1 class="text-center user-select-none">Blazor Games</h1>
 
 <div class="container-lg pt-4 d-flex flex-wrap">
     @if (Identity != null)

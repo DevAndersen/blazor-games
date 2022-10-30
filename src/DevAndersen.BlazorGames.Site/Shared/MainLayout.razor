@@ -1,7 +1,21 @@
 ﻿@inherits LayoutComponentBase
 
-<PageTitle>DevAndersen.BlazorGames.Site</PageTitle>
+<PageTitle>@PageTitle</PageTitle>
+<h1 class="text-center user-select-none pt-4">@PageTitle</h1>
 
 <div class="pt-3">
-    @Body
+    <CascadingValue Value="this">
+        @Body
+    </CascadingValue>
 </div>
+
+@code
+{
+    public string PageTitle { get; set; } = "Blazor Games";
+
+    public void UpdatePageTitle(string pageTitle)
+    {
+        PageTitle = pageTitle;
+        StateHasChanged();
+    }
+}

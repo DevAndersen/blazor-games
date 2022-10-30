@@ -1,17 +1,20 @@
 ﻿@page "/lobby/{GameId:int}"
 @using DevAndersen.BlazorGames.Core
+@using DevAndersen.BlazorGames.Site.ViewExtensions
+@inherits BasePage
 @implements IDisposable
 @inject IIdentityService identityService
 @inject GameLobby gameLobby
 @inject NavigationManager navigationManager
 
-<PageTitle>Lobby</PageTitle>
-<h3>Lobby</h3>
-
-<div>Finding a match...</div>
+<div class="text-center p-4 fs-4 fst-italic">Finding a '@GameName' match...</div>
 
 @code
 {
+    public override string PageTitle => "Lobby";
+
+    private string GameName => GameDefinition.GetGameDefinition((GameIdentity)GameId)?.Name ?? $"Unnamed game {GameId}";
+
     [Parameter]
     public int GameId { get; set; }
 
