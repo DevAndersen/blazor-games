@@ -1,5 +1,6 @@
 ﻿@page "/games/{GameId:int}"
 @using DevAndersen.BlazorGames.Core.GameHandlers
+@using DevAndersen.BlazorGames.Site.Pages.Games
 @using DevAndersen.BlazorGames.Site.ViewExtensions
 @inherits BasePage
 @implements IDisposable
@@ -7,7 +8,9 @@
 @inject GameLobby gameLobby
 
 <div class="container-lg p-2 d-flex h-100 flex-wrap">
-    <div class="col-12 col-sm-8 bg-secondary">Game view goes here</div>
+    <div class="col-12 col-sm-8 bg-secondary">
+        <DynamicComponent Type="@typeof(RockPaperScissors)" Parameters="@parameters" />
+    </div>
     <div class="col-12 col-sm-4 px-2">
         <Chat Handler="Handler" Identity="Identity" />
     </div>
@@ -17,6 +20,8 @@
 {
     [Parameter]
     public int GameId { get; set; }
+
+    private IDictionary<string, object> parameters;
 
     public override string PageTitle => GameDefinition.GetGameDefinition((GameIdentity)GameId)?.Name ?? string.Empty;
 
@@ -33,6 +38,11 @@
             Handler = gameLobby.GetGameHandler<GameHandler>(Identity.Id);
             if (Handler != null)
             {
+                parameters = new Dictionary<string, object>
+                {
+                    ["Handler"] = Handler
+                };
+
                 Handler.UpdateNotifier.OnUpdate += Update;
             }
             StateHasChanged();
