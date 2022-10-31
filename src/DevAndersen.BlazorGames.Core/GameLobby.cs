@@ -78,9 +78,9 @@ namespace DevAndersen.BlazorGames.Core
             return true;
         }
 
-        public T? GetGameHandler<T>(Guid playerId) where T : GameHandler
+        public GameHandler? GetGameHandler(Guid playerId)
         {
-            return gameHandlers.FirstOrDefault(x => x.PlayerIds.Contains(playerId)) as T;
+            return gameHandlers.FirstOrDefault(x => x.PlayerIds.Contains(playerId));
         }
 
         public void StopGame(GameHandler handler)

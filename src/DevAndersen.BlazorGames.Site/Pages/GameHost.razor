@@ -35,7 +35,7 @@
         if (firstRender)
         {
             Identity = await identityService.LoadIdentityAsync();
-            Handler = gameLobby.GetGameHandler<GameHandler>(Identity.Id);
+            Handler = gameLobby.GetGameHandler(Identity.Id);
             if (Handler != null)
             {
                 parameters = new Dictionary<string, object>
