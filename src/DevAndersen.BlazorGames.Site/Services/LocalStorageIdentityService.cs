@@ -18,7 +18,7 @@ public class LocalStorageIdentityService : IIdentityService
     {
         PlayerIdentity? identity = await localStorage.GetItemAsync<PlayerIdentity>(Constants.Site.LocalStoragePlayerIdentityKey);
 
-        if (identity != null && identity.Id != null)
+        if (identity != null && identity.Id != default)
         {
             return identity;
         }

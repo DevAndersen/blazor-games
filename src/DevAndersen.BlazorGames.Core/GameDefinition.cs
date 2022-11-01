@@ -6,7 +6,7 @@ public class GameDefinition
 
     public string Name { get; }
 
-    public string Page => $"/games/{(int)GameIdentity.RockPaperScissors}";
+    public string Page => $"/games/{(int)GameIdentity}";
 
     public string TextIcon { get; set; }
 

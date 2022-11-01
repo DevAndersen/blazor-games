@@ -17,7 +17,7 @@
                 <a href="/lobby/@((int)gameDefinition.GameIdentity)">
                     <div class="p-4 text-center btn btn-success h-100 w-100 rounded-2 game-tile">
                         <div class="fs-1 fw-bold user-select-none">@gameDefinition.TextIcon</div>
-                        <div class="fs-3 fw-bold user-select-none">@gameDefinition.Name</div>
+                        <div class="fs-3 fw-bold user-selwewect-none">@gameDefinition.Name</div>
                     </div>
                 </a>
             </div>
@@ -42,13 +42,10 @@
 
     private async void PropertyChangedAction(object? sender, PropertyChangedEventArgs args)
     {
-        if (sender is PlayerIdentity identity)
+        if (args.PropertyName == nameof(Identity.Username) && sender is PlayerIdentity identity)
         {
-            if (args.PropertyName == nameof(Identity.Username))
-            {
-                await identityService.SaveIdentityAsync(identity);
-                StateHasChanged();
-            }
+            await identityService.SaveIdentityAsync(identity);
+            StateHasChanged();
         }
     }
 

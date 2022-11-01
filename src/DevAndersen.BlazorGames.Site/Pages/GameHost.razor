@@ -21,7 +21,7 @@
     [Parameter]
     public int GameId { get; set; }
 
-    private IDictionary<string, object> parameters;
+    private IDictionary<string, object>? parameters;
 
     public override string PageTitle => GameDefinition.GetGameDefinition((GameIdentity)GameId)?.Name ?? string.Empty;
 
