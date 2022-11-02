@@ -8,17 +8,17 @@
 @inject GameLobby gameLobby
 
 <div class="container-lg p-2 d-flex h-100 flex-wrap">
-    <div class="col-12 col-sm-8 bg-secondary flex-fill">
-        @if (Identity != null && Handler != null)
-        {
-            <DynamicComponent Type="@typeof(RockPaperScissors)" Parameters="@parameters" />
-        }
-    </div>
-    @if (Handler?.GameDefinition.PlayersNeeded > 1)
+    @if (Identity != null && Handler != null)
     {
-        <div class="col-12 col-sm-4 px-2">
-            <Chat Handler="Handler" Identity="Identity" />
+        <div class="col-12 col-sm-8 bg-secondary flex-fill">
+            <DynamicComponent Type="@typeof(RockPaperScissors)" Parameters="@parameters" />
         </div>
+        @if (Handler?.GameDefinition.PlayersNeeded > 1)
+        {
+            <div class="col-12 col-sm-4 px-2">
+                <Chat Handler="Handler" Identity="Identity" />
+            </div>
+        }
     }
 </div>
 
