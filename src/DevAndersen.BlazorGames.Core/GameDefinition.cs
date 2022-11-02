@@ -2,36 +2,52 @@
 
 public class GameDefinition
 {
-    public GameIdentity GameIdentity { get; }
+    public GameIdentity Identity { get; }
 
-    public string Name { get; }
+    // Todo: Mark as required.
+    public int PlayersNeeded { get; init; }
 
-    public string Page => $"/games/{(int)GameIdentity}";
+    // Todo: Mark as required.
+    public string Name { get; init; }
 
-    public string TextIcon { get; set; }
+    // Todo: Mark as required.
+    public string TextIcon { get; init; }
 
-    public int PlayersNeeded { get; }
+    public string Page => $"/games/{(int)Identity}";
 
-    public GameDefinition(GameIdentity identity, string name, int playersNeeded, string textIcon)
+    private GameDefinition(GameIdentity identity)
     {
-        GameIdentity = identity;
-        Name = name;
-        PlayersNeeded = playersNeeded;
-        TextIcon = textIcon;
+        Identity = identity;
     }
 
-    public static readonly IEnumerable<GameDefinition> GameDefinitions = new GameDefinition[]
+    public static GameDefinition GetDefinition(GameIdentity identity)
     {
-        new GameDefinition(GameIdentity.RockPaperScissors, "Rock paper scissors", 2, new string(new char[]
+        return GameDefinitions[identity];
+    }
+
+    public static IEnumerable<GameDefinition> GetDefinitions()
+    {
+        return GameDefinitions.Values;
+    }
+
+    public static IReadOnlyDictionary<GameIdentity, GameDefinition> GameDefinitions { get; } = Enum.GetValues<GameIdentity>()
+        .ToDictionary(
+        k => k,
+        v => CreateDefinition(v));
+
+    private static GameDefinition CreateDefinition(GameIdentity identity) => identity switch
+    {
+        GameIdentity.RockPaperScissors => new GameDefinition(identity)
         {
-            (char)55358, (char)57000, // Rock emoji
-            (char)55357, (char)56540, // Scroll emoji
-            (char)9986, (char)65039, // Scissors emoji
-        }))
+            PlayersNeeded = 2,
+            Name = "Rock paper scissors",
+            TextIcon = new string(new char[]
+            {
+                (char)55358, (char)57000, // Rock emoji
+                (char)55357, (char)56540, // Scroll emoji
+                (char)9986, (char)65039   // Scissors emoji
+            })
+        },
+        _ => throw new ArgumentOutOfRangeException($"No game matches identity '{identity}'.")
     };
-
-    public static GameDefinition? GetGameDefinition(GameIdentity identity)
-    {
-        return GameDefinitions.FirstOrDefault(x => x.GameIdentity == identity);
-    }
 }

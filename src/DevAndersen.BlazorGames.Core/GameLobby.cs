@@ -19,7 +19,7 @@ public class GameLobby
 
     public void AddPlayerToQueue(Guid playerId, GameIdentity gameIdentity)
     {
-        GameDefinition? gameDefinition = GameDefinition.GetGameDefinition(gameIdentity);
+        GameDefinition? gameDefinition = GameDefinition.GetDefinition(gameIdentity);
         if (gameDefinition != null)
         {
             queue[playerId] = gameDefinition;
@@ -66,7 +66,7 @@ public class GameLobby
 
     public bool StartGame(GameDefinition gameDefinition, IEnumerable<Guid> playerIds)
     {
-        GameHandler? handler = gameDefinition.GameIdentity switch
+        GameHandler? handler = gameDefinition.Identity switch
         {
             GameIdentity.RockPaperScissors => new RockPaperScissorsHandler(playerIds),
             _ => null,

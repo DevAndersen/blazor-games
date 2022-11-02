@@ -16,7 +16,7 @@
 
     public override string PageTitle => "Lobby";
 
-    private string GameName => GameDefinition.GetGameDefinition((GameIdentity)GameId)?.Name ?? $"Unnamed game {GameId}";
+    private string GameName => GameDefinition.GetDefinition((GameIdentity)GameId)?.Name ?? $"Unnamed game {GameId}";
 
     public PlayerIdentity? Identity { get; set; }
 

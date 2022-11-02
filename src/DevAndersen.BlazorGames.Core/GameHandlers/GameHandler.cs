@@ -4,6 +4,8 @@ namespace DevAndersen.BlazorGames.Core.GameHandlers;
 
 public abstract class GameHandler
 {
+	public GameIdentity GameIdentity { get;  }
+
 	public Guid GameId { get; }
 
 	public IEnumerable<Guid> PlayerIds { get; }
@@ -14,10 +16,13 @@ public abstract class GameHandler
 
     public UpdateNotifier UpdateNotifier { get; }
 
-    public GameHandler(IEnumerable<Guid> playerIds)
+	public GameDefinition GameDefinition => GameDefinition.GetDefinition(GameIdentity);
+
+    public GameHandler(GameIdentity gameIdentity, IEnumerable<Guid> playerIds)
 	{
+		GameIdentity = gameIdentity;
 		PlayerIds = playerIds;
-		GameId = Guid.NewGuid();
+        GameId = Guid.NewGuid();
 		Players = new Dictionary<Guid, PlayerIdentity>();
 		Chat = new List<(string Message, PlayerIdentity Sender)>();
 		UpdateNotifier = new UpdateNotifier();
