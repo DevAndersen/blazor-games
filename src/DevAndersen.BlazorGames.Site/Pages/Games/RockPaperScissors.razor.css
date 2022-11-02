@@ -1,0 +1,19 @@
+﻿.rps-tile
+{
+    background: var(--bs-primary);
+}
+
+.rps-tile-selected
+{
+    background: var(--bs-success);
+}
+
+.rps-tile-not-selected
+{
+    background: var(--bs-dark);
+}
+
+.rps-tile:hover
+{
+    background: var(--bs-success);
+}

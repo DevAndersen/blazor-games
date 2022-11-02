@@ -28,6 +28,8 @@ public abstract class GameHandler
 		UpdateNotifier = new UpdateNotifier();
     }
 
+	public abstract void StartGame();
+
 	public void JoinGame(PlayerIdentity playerIdentity)
 	{
 		Players[playerIdentity.Id] = playerIdentity;

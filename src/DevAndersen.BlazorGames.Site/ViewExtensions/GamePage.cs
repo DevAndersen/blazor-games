@@ -1,12 +1,15 @@
 ﻿using DevAndersen.BlazorGames.Core.GameHandlers;
+using DevAndersen.BlazorGames.Core.Players;
 using Microsoft.AspNetCore.Components;
+using System;
 
 namespace DevAndersen.BlazorGames.Site.ViewExtensions;
 
 public class GamePage<T> : ComponentBase where T : GameHandler
 {
     [Parameter]
-    public T? Handler { get; set; }
+    public T Handler { get; set; } = default!;
 
-    public string DebugString { get; set; } = typeof(T).Name;
+    [Parameter]
+    public PlayerIdentity Identity { get; set; } = default!;
 }

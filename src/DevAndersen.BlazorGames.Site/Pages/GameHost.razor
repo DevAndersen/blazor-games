@@ -9,11 +9,17 @@
 
 <div class="container-lg p-2 d-flex h-100 flex-wrap">
     <div class="col-12 col-sm-8 bg-secondary flex-fill">
-        <DynamicComponent Type="@typeof(RockPaperScissors)" Parameters="@parameters" />
+        @if (Identity != null && Handler != null)
+        {
+            <DynamicComponent Type="@typeof(RockPaperScissors)" Parameters="@parameters" />
+        }
     </div>
-    <div class="col-12 col-sm-4 px-2">
-        <Chat Handler="Handler" Identity="Identity" />
-    </div>
+    @if (Handler?.GameDefinition.PlayersNeeded > 1)
+    {
+        <div class="col-12 col-sm-4 px-2">
+            <Chat Handler="Handler" Identity="Identity" />
+        </div>
+    }
 </div>
 
 @code
@@ -40,7 +46,8 @@
             {
                 parameters = new Dictionary<string, object>
                 {
-                    ["Handler"] = Handler
+                    ["Handler"] = Handler,
+                    ["Identity"] = Identity
                 };
 
                 Handler.UpdateNotifier.OnUpdate += Update;
