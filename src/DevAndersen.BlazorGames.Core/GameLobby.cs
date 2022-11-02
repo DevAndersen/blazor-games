@@ -4,7 +4,7 @@ namespace DevAndersen.BlazorGames.Core;
 
 public class GameLobby
 {
-    public event Action<IEnumerable<Guid>, GameDefinition> JoinGameEvent = default!;
+    public event Action<GameDefinition, IEnumerable<Guid>> JoinGameEvent = default!;
 
     private readonly Dictionary<Guid, GameDefinition> queue;
     private readonly List<GameHandler> gameHandlers;
@@ -35,23 +35,26 @@ public class GameLobby
     public void UpdateQueue()
     {
         // Groups players based on the games they want to play, ensuring there are enough in each group to start the game.
-        IEnumerable<IEnumerable<Guid>> groups = queue
-            .GroupBy(x => x.Value)
-            .SelectMany(y => y.Chunk(y.Key.PlayersNeeded)
-                .Where(z => z.Length == y.Key.PlayersNeeded))
-            .Select(a => a.Select(b => b.Key));
+        Dictionary<GameDefinition, IEnumerable<Guid[]>> groups = queue
+            .GroupBy(
+                groupKey => groupKey.Value,
+                groupVal => groupVal.Key)
+            .ToDictionary(
+                dictionaryKey => dictionaryKey.Key,
+                dictionaryVal => dictionaryVal.Chunk(dictionaryVal.Key.PlayersNeeded)
+            .Where(playerIds => playerIds.Length == dictionaryVal.Key.PlayersNeeded));
 
-        foreach (IEnumerable<Guid> group in groups)
+        foreach (KeyValuePair<GameDefinition, IEnumerable<Guid[]>> group in groups)
         {
-            if (group.Any())
+            foreach (Guid[] playerIds in group.Value)
             {
-                GameDefinition gameDefinition = queue[group.First()];
-
-                bool gameCreated = StartGame(gameDefinition, group);
-
-                if (gameCreated)
+                if (StartGame(group.Key, playerIds))
                 {
-                    JoinGameEvent.Invoke(group, gameDefinition);
+                    JoinGameEvent.Invoke(group.Key, playerIds);
+                    foreach (Guid playerId in playerIds)
+                    {
+                        queue.Remove(playerId);
+                    }
                 }
             }
         }

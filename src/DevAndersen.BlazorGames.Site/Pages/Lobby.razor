@@ -33,9 +33,9 @@
         }
     }
 
-    private void JoinGame(IEnumerable<Guid> playerId, GameDefinition gameDefinition)
+    private void JoinGame(GameDefinition gameDefinition, IEnumerable<Guid> playerIds)
     {
-        if (Identity != null && Identity.Id != Guid.Empty && playerId.Contains(Identity.Id))
+        if (Identity != null && Identity.Id != Guid.Empty && playerIds.Contains(Identity.Id))
         {
             navigationManager.NavigateTo(gameDefinition.Page, true);
         }
