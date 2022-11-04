@@ -1,6 +1,6 @@
 ﻿namespace DevAndersen.BlazorGames.Core.Messaging;
 
-public interface IMessageSender
+public interface IMessageSender : IEquatable<IMessageSender>
 {
     public string GetSenderIdentity();
 }

@@ -4,19 +4,33 @@
 
 <div class="bg-dark rounded-1 border  border-secondary h-100">
     <div class="d-flex flex-column h-100">
-        <div class="p-1 text-center fw-bold border-secondary border-bottom">Chat</div>
+        <div class="border-secondary border-bottom text-center fw-bold">Messages</div>
+        @if (Handler.HasChatSupport)
+        {
+            <div class="border-secondary border-bottom text-center d-flex">
+                @foreach (MessageTab tab in Enum.GetValues<MessageTab>())
+                {
+                    string selectedClasses = tab == currentTab ? "bg-secondary" : "";
+                    <div @onclick="() => SetMessageTab(tab)" class="col-4 flex-fill user-select-none @selectedClasses">@tab</div>
+                }
+            </div>
+        }
         <div class="flex-fill d-flex flex-column scroller">
             <div class="p-2 d-flex flex-wrap">
                 @{
                     IMessageSender? lastSender = null;
-                    foreach ((IMessageSender sender, string[] messages) in Handler.GetGroupedChatMessages())
+
+                    var groupedMessages = Handler.GetGroupedChatMessages();
+                    var filteredMessages = FilterMessagesForCurrentTab(groupedMessages);
+
+                    foreach ((IMessageSender sender, string[] messages) in filteredMessages)
                     {
                         <div class="p-1 col-12">
                             @if (lastSender != sender)
                             {
                                 <div class="pb-1 opacity-50 @GetMessageSenderDirectionClasses(sender)">@GetSenderName(sender)</div>
                             }
-                            <div class="w-75 p-1 rounded @GetMessageDirectionClasses(sender)">
+                            <div class="p-1 rounded @GetMessageDirectionClasses(sender)">
                                 @for (int i = 0; i < messages.Length; i++)
                                 {
                                     string message = messages[i];
@@ -30,12 +44,15 @@
                 }
             </div>
         </div>
-        <div class="p-2">
-            <div class="input-group">
-                <input @bind=ChatMessage type="text" class="form-control text-light border-0" style="background-color: var(--bs-gray-dark)" placeholder="Message">
-                <button @onclick=SendMessage class="btn btn btn-secondary border-1 border-dark" type="button" id="button-addon2">Send</button>
+        @if (Handler.HasChatSupport && currentTab != MessageTab.System)
+        {
+            <div class="p-2">
+                <div class="input-group">
+                    <input @bind=ChatMessage @onkeyup=KeyUp type="text" class="form-control text-light border-0" style="background-color: var(--bs-gray-dark)" placeholder="Message">
+                    <button @onclick=SendMessage class="btn btn btn-secondary border-1 border-dark" type="button" id="button-addon2">Send</button>
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 
@@ -49,17 +66,27 @@
 
     public string ChatMessage { get; set; }
 
+    private MessageTab currentTab;
+
     public Messages()
     {
         ChatMessage = string.Empty;
     }
 
-    public void SendMessage()
+    private void SendMessage()
     {
         if (!string.IsNullOrWhiteSpace(ChatMessage) && Handler != null)
         {
             Handler.SendChatMessage(ChatMessage, Identity);
             ChatMessage = string.Empty;
+        }
+    }
+
+    private void KeyUp(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            SendMessage();
         }
     }
 
@@ -71,16 +98,20 @@
 
     private string GetMessageDirectionClasses(IMessageSender sender)
     {
-        return IsSenderSelf(sender)
-            ? "bg-success"
-            : "bg-primary float-end";
+        return sender is SystemMessageSender
+            ? "w-100 bg-secondary text-center"
+            :  IsSenderSelf(sender)
+                ? "w-75 bg-success"
+                : "w-75 bg-primary float-end";
     }
 
     private string GetMessageSenderDirectionClasses(IMessageSender sender)
     {
-        return IsSenderSelf(sender)
-            ? ""
-            : "text-end";
+        return sender is SystemMessageSender
+            ? "d-none"
+            : IsSenderSelf(sender)
+                ? ""
+            :    "text-end";
     }
 
     private string GetSenderName(IMessageSender sender)
@@ -95,5 +126,27 @@
         return shouldBeSpaced
             ? "pb-2"
             : "";
+    }
+
+    private IEnumerable<KeyValuePair<IMessageSender, string[]>> FilterMessagesForCurrentTab(IEnumerable<KeyValuePair<IMessageSender, string[]>> groupedMessages)
+    {
+        return currentTab switch
+        {
+            MessageTab.Chat => groupedMessages.Where(g => g.Key is PlayerMessageSender),
+            MessageTab.System => groupedMessages.Where(g => g.Key is SystemMessageSender),
+            _ => groupedMessages
+        };
+    }
+
+    private void SetMessageTab(MessageTab tab)
+    {
+        currentTab = tab;
+    }
+
+    private enum MessageTab
+    {
+        All,
+        Chat,
+        System
     }
 }

@@ -2,11 +2,17 @@
 
 public record SystemMessageSender : IMessageSender
 {
-    private readonly MessageLevel messageLevel;
+    internal readonly MessageLevel messageLevel;
 
     public SystemMessageSender(MessageLevel messageLevel)
     {
         this.messageLevel = messageLevel;
+    }
+
+    public bool Equals(IMessageSender? other)
+    {
+        return other is SystemMessageSender sender
+            && sender.messageLevel == messageLevel;
     }
 
     public string GetSenderIdentity() => messageLevel.ToString();

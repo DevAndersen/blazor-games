@@ -26,7 +26,8 @@ public abstract class GameHandler
         GameId = Guid.NewGuid();
 		Players = new Dictionary<Guid, PlayerIdentity>();
 		UpdateNotifier = new UpdateNotifier();
-		Chat = new MessageHandler(UpdateNotifier);
+		Chat = new MessageHandler(UpdateNotifier, true);
+		Chat.SendSystemMessage("Game starting...");
     }
 
 	public abstract void StartGame();

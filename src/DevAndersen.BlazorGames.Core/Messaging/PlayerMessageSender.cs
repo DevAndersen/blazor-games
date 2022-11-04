@@ -13,5 +13,11 @@ public record PlayerMessageSender : IMessageSender
         this.identity = identity;
     }
 
+    public bool Equals(IMessageSender? other)
+    {
+        return other is PlayerMessageSender sender
+            && sender.identity.Id == identity.Id;
+    }
+
     public string GetSenderIdentity() => identity.Username ?? identity.Id.ToString();
 }

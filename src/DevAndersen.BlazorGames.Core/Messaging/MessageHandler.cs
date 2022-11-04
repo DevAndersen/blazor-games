@@ -5,18 +5,24 @@ namespace DevAndersen.BlazorGames.Core.Chat;
 
 public class MessageHandler
 {
+    public bool HasChatSupport { get; }
+
 	private readonly UpdateNotifier updateNotifier;
 	private readonly List<Message> chatMessages;
 
-    public MessageHandler(UpdateNotifier updateNotifier)
+    public MessageHandler(UpdateNotifier updateNotifier, bool hasChatSupport)
 	{
 		this.updateNotifier = updateNotifier;
+        HasChatSupport = hasChatSupport;
         chatMessages = new List<Message>();
     }
 
 	public void SendChatMessage(string message, PlayerIdentity identity)
     {
-        SendMessage(message, new PlayerMessageSender(identity));
+        if (HasChatSupport)
+        {
+            SendMessage(message, new PlayerMessageSender(identity));
+        }
     }
 
 	public void SendSystemMessage(string message)
@@ -50,7 +56,7 @@ public class MessageHandler
 
                 string[] messages = chatMessages
                     .Skip(index)
-                    .TakeWhile(x => x.Sender == sender)
+                    .TakeWhile(x => x.Sender.Equals(sender))
                     .Select(y => y.Text)
                     .ToArray();
 
