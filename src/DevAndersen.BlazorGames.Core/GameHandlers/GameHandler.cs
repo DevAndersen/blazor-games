@@ -1,4 +1,5 @@
-﻿using DevAndersen.BlazorGames.Core.Players;
+﻿using DevAndersen.BlazorGames.Core.Chat;
+using DevAndersen.BlazorGames.Core.Players;
 
 namespace DevAndersen.BlazorGames.Core.GameHandlers;
 
@@ -12,11 +13,11 @@ public abstract class GameHandler
 
 	public Dictionary<Guid, PlayerIdentity> Players { get; }
 
-	public List<(string Message, PlayerIdentity Sender)> Chat { get; }
-
     public UpdateNotifier UpdateNotifier { get; }
 
-	public GameDefinition GameDefinition => GameDefinition.GetDefinition(GameIdentity);
+    public MessageHandler Chat { get; }
+
+    public GameDefinition GameDefinition => GameDefinition.GetDefinition(GameIdentity);
 
     public GameHandler(GameIdentity gameIdentity, IEnumerable<Guid> playerIds)
 	{
@@ -24,8 +25,8 @@ public abstract class GameHandler
 		PlayerIds = playerIds;
         GameId = Guid.NewGuid();
 		Players = new Dictionary<Guid, PlayerIdentity>();
-		Chat = new List<(string Message, PlayerIdentity Sender)>();
 		UpdateNotifier = new UpdateNotifier();
+		Chat = new MessageHandler(UpdateNotifier);
     }
 
 	public abstract void StartGame();
@@ -43,7 +44,7 @@ public abstract class GameHandler
 	{
 		if (!string.IsNullOrWhiteSpace(message) && playerIdentity != null)
 		{
-			Chat.Add((message, playerIdentity));
+			Chat.SendChatMessage(message, playerIdentity);
 		}
 	}
 }
