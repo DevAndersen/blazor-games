@@ -10,8 +10,8 @@
             <div class="border-secondary border-bottom text-center d-flex">
                 @foreach (MessageTab tab in Enum.GetValues<MessageTab>())
                 {
-                    string selectedClasses = tab == currentTab ? "bg-secondary" : "";
-                    <div @onclick="() => SetMessageTab(tab)" class="col-4 flex-fill user-select-none @selectedClasses">@tab</div>
+                    string? selected = tab == currentTab ? "data-selected" : null;
+                    <div @onclick="() => SetMessageTab(tab)" class="col-4 message-tab flex-fill user-select-none" data-selected=@selected>@tab</div>
                 }
             </div>
         }

@@ -6,3 +6,13 @@
     scrollbar-color: #888 #0000;
     scrollbar-width: thin;
 }
+
+.message-tab
+{
+    transition: background-color 0.2s;
+}
+
+.message-tab[data-selected]
+{
+    background-color: var(--bs-secondary);
+}
