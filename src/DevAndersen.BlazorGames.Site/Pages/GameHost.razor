@@ -1,4 +1,4 @@
-﻿@page "/games/{GameId:int}"
+﻿@page "/games/{GameId:guid}"
 @using DevAndersen.BlazorGames.Core.GameHandlers
 @using DevAndersen.BlazorGames.Site.Pages.Games
 @using DevAndersen.BlazorGames.Site.ViewExtensions
@@ -6,6 +6,7 @@
 @implements IDisposable
 @inject IIdentityService identityService
 @inject GameLobby gameLobby
+@inject NavigationManager navigationManager
 
 <div class="container-lg p-2 d-flex h-100 flex-wrap">
     @if (Identity != null && Handler != null)
@@ -25,11 +26,11 @@
 @code
 {
     [Parameter]
-    public int GameId { get; set; }
+    public Guid GameId { get; set; }
 
     private IDictionary<string, object>? parameters;
 
-    public override string PageTitle => GameDefinition.GetDefinition((GameIdentity)GameId)?.Name ?? string.Empty;
+    public override string PageTitle => gameLobby.GetGameHandler(GameId)?.GameDefinition.Name ?? string.Empty;
 
     public PlayerIdentity? Identity { get; set; }
 
@@ -41,7 +42,7 @@
         if (firstRender)
         {
             Identity = await identityService.LoadIdentityAsync();
-            Handler = gameLobby.GetGameHandler(Identity.Id);
+            Handler = gameLobby.GetGameHandler(GameId);
             if (Handler != null)
             {
                 parameters = new Dictionary<string, object>
@@ -51,8 +52,12 @@
                 };
 
                 Handler.UpdateNotifier.OnUpdate += Update;
+                StateHasChanged();
             }
-            StateHasChanged();
+            else
+            {
+                navigationManager.NavigateTo("/");
+            }
         }
     }
 

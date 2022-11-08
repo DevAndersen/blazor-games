@@ -4,15 +4,15 @@ namespace DevAndersen.BlazorGames.Core;
 
 public class GameLobby
 {
-    public event Action<GameDefinition, IEnumerable<Guid>> JoinGameEvent = default!;
+    public event Action<Guid, IEnumerable<Guid>> JoinGameEvent = default!;
 
     private readonly Dictionary<Guid, GameDefinition> queue;
-    private readonly List<GameHandler> gameHandlers;
+    private readonly Dictionary<Guid, GameHandler> gameHandlers;
 
     public GameLobby()
     {
         queue = new Dictionary<Guid, GameDefinition>();
-        gameHandlers = new List<GameHandler>();
+        gameHandlers = new Dictionary<Guid, GameHandler>();
     }
 
     #region Queue
@@ -48,9 +48,9 @@ public class GameLobby
         {
             foreach (Guid[] playerIds in group.Value)
             {
-                if (StartGame(group.Key, playerIds))
+                if (TryStartGame(group.Key, playerIds, out Guid guid))
                 {
-                    JoinGameEvent.Invoke(group.Key, playerIds);
+                    JoinGameEvent.Invoke(guid, playerIds);
                     foreach (Guid playerId in playerIds)
                     {
                         queue.Remove(playerId);
@@ -64,7 +64,7 @@ public class GameLobby
 
     #region Game
 
-    public bool StartGame(GameDefinition gameDefinition, IEnumerable<Guid> playerIds)
+    private bool TryStartGame(GameDefinition gameDefinition, IEnumerable<Guid> playerIds, out Guid guid)
     {
         GameHandler? handler = gameDefinition.Identity switch
         {
@@ -74,21 +74,24 @@ public class GameLobby
 
         if (handler == null)
         {
+            guid = Guid.Empty;
             return false;
         }
 
-        gameHandlers.Add(handler);
+        guid = handler.GameId;
+        gameHandlers[guid] = handler;
         return true;
     }
 
     public GameHandler? GetGameHandler(Guid playerId)
     {
-        return gameHandlers.FirstOrDefault(x => x.PlayerIds.Contains(playerId));
+        gameHandlers.TryGetValue(playerId, out GameHandler? handler);
+        return handler;
     }
 
     public void StopGame(GameHandler handler)
     {
-        gameHandlers.Remove(handler);
+        gameHandlers.Remove(handler.GameId);
     }
 
     #endregion

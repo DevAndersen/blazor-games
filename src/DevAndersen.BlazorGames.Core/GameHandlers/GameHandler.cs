@@ -11,7 +11,7 @@ public abstract class GameHandler
 
 	public IEnumerable<Guid> PlayerIds { get; }
 
-	public Dictionary<Guid, PlayerIdentity> Players { get; }
+	private Dictionary<Guid, PlayerIdentity> Players { get; }
 
     public UpdateNotifier UpdateNotifier { get; }
 

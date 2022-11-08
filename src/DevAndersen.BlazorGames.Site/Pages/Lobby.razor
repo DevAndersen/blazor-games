@@ -33,11 +33,11 @@
         }
     }
 
-    private void JoinGame(GameDefinition gameDefinition, IEnumerable<Guid> playerIds)
+    private void JoinGame(Guid gameId, IEnumerable<Guid> playerIds)
     {
         if (Identity != null && Identity.Id != Guid.Empty && playerIds.Contains(Identity.Id))
         {
-            navigationManager.NavigateTo(gameDefinition.Page, true);
+            navigationManager.NavigateTo($"/games/{gameId}", true);
         }
     }
 
