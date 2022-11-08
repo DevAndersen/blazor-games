@@ -1,4 +1,4 @@
-﻿namespace DevAndersen.BlazorGames.Core;
+﻿namespace DevAndersen.BlazorGames.Core.Games;
 
 public class GameDefinition
 {

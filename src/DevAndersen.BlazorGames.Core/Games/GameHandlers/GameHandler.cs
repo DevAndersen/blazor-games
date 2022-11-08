@@ -1,11 +1,11 @@
-﻿using DevAndersen.BlazorGames.Core.Chat;
+﻿using DevAndersen.BlazorGames.Core.Messaging;
 using DevAndersen.BlazorGames.Core.Players;
 
-namespace DevAndersen.BlazorGames.Core.GameHandlers;
+namespace DevAndersen.BlazorGames.Core.Games.GameHandlers;
 
 public abstract class GameHandler
 {
-	public GameIdentity GameIdentity { get;  }
+	public GameIdentity GameIdentity { get; }
 
 	public Guid GameId { get; }
 
@@ -13,22 +13,22 @@ public abstract class GameHandler
 
 	private Dictionary<Guid, PlayerIdentity> Players { get; }
 
-    public UpdateNotifier UpdateNotifier { get; }
+	public UpdateNotifier UpdateNotifier { get; }
 
-    public MessageHandler Chat { get; }
+	public MessageHandler Chat { get; }
 
-    public GameDefinition GameDefinition => GameDefinition.GetDefinition(GameIdentity);
+	public GameDefinition GameDefinition => GameDefinition.GetDefinition(GameIdentity);
 
-    public GameHandler(GameIdentity gameIdentity, IEnumerable<Guid> playerIds)
+	public GameHandler(GameIdentity gameIdentity, IEnumerable<Guid> playerIds)
 	{
 		GameIdentity = gameIdentity;
 		PlayerIds = playerIds;
-        GameId = Guid.NewGuid();
+		GameId = Guid.NewGuid();
 		Players = new Dictionary<Guid, PlayerIdentity>();
 		UpdateNotifier = new UpdateNotifier();
 		Chat = new MessageHandler(UpdateNotifier, true);
 		Chat.SendSystemMessage("Game starting...");
-    }
+	}
 
 	public abstract void StartGame();
 

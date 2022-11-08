@@ -1,5 +1,5 @@
 using Blazored.LocalStorage;
-using DevAndersen.BlazorGames.Core;
+using DevAndersen.BlazorGames.Core.Games;
 using DevAndersen.BlazorGames.Site.Services;
 using DevAndersen.BlazorGames.Site.Services.Abstractions;
 

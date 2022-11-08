@@ -1,23 +1,22 @@
-﻿using DevAndersen.BlazorGames.Core.Messaging;
-using DevAndersen.BlazorGames.Core.Players;
+﻿using DevAndersen.BlazorGames.Core.Players;
 
-namespace DevAndersen.BlazorGames.Core.Chat;
+namespace DevAndersen.BlazorGames.Core.Messaging;
 
 public class MessageHandler
 {
     public bool HasChatSupport { get; }
 
-	private readonly UpdateNotifier updateNotifier;
-	private readonly List<Message> chatMessages;
+    private readonly UpdateNotifier updateNotifier;
+    private readonly List<Message> chatMessages;
 
     public MessageHandler(UpdateNotifier updateNotifier, bool hasChatSupport)
-	{
-		this.updateNotifier = updateNotifier;
+    {
+        this.updateNotifier = updateNotifier;
         HasChatSupport = hasChatSupport;
         chatMessages = new List<Message>();
     }
 
-	public void SendChatMessage(string message, PlayerIdentity identity)
+    public void SendChatMessage(string message, PlayerIdentity identity)
     {
         if (HasChatSupport)
         {
@@ -25,8 +24,8 @@ public class MessageHandler
         }
     }
 
-	public void SendSystemMessage(string message)
-	{
+    public void SendSystemMessage(string message)
+    {
         SendMessage(message, new SystemMessageSender(SystemMessageSender.MessageLevel.Information));
     }
 
@@ -36,9 +35,9 @@ public class MessageHandler
         updateNotifier.Update();
     }
 
-	public IEnumerable<Message> GetChatMessages()
-	{
-		return chatMessages;
+    public IEnumerable<Message> GetChatMessages()
+    {
+        return chatMessages;
     }
 
     public IEnumerable<KeyValuePair<IMessageSender, string[]>> GetGroupedChatMessages()

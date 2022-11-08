@@ -1,7 +1,6 @@
-﻿using DevAndersen.BlazorGames.Core.Messaging;
-using DevAndersen.BlazorGames.Core.Players;
+﻿using DevAndersen.BlazorGames.Core.Players;
 
-namespace DevAndersen.BlazorGames.Core.Chat;
+namespace DevAndersen.BlazorGames.Core.Messaging;
 
 public class Message
 {

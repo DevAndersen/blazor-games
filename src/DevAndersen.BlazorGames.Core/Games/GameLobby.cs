@@ -1,6 +1,6 @@
-﻿using DevAndersen.BlazorGames.Core.GameHandlers;
+﻿using DevAndersen.BlazorGames.Core.Games.GameHandlers;
 
-namespace DevAndersen.BlazorGames.Core;
+namespace DevAndersen.BlazorGames.Core.Games;
 
 public class GameLobby
 {
