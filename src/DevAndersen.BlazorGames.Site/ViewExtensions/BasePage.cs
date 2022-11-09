@@ -1,5 +1,4 @@
-﻿using DevAndersen.BlazorGames.Site.Shared;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace DevAndersen.BlazorGames.Site.ViewExtensions;
 

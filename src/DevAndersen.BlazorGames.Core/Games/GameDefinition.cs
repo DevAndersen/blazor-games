@@ -4,14 +4,11 @@ public class GameDefinition
 {
     public GameIdentity Identity { get; }
 
-    // Todo: Mark as required.
-    public int PlayersNeeded { get; init; }
+    public required int PlayersNeeded { get; init; }
 
-    // Todo: Mark as required.
-    public string Name { get; init; }
+    public required string Name { get; init; }
 
-    // Todo: Mark as required.
-    public string TextIcon { get; init; }
+    public required string TextIcon { get; init; }
 
     public string Page => $"/games/{(int)Identity}";
 
@@ -33,7 +30,7 @@ public class GameDefinition
     public static IReadOnlyDictionary<GameIdentity, GameDefinition> GameDefinitions { get; } = Enum.GetValues<GameIdentity>()
         .ToDictionary(
         k => k,
-        v => CreateDefinition(v));
+        CreateDefinition);
 
     private static GameDefinition CreateDefinition(GameIdentity identity) => identity switch
     {
