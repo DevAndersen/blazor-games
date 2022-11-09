@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B9C5D152-E875-4A10-BAB1-30DC27E6E672}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevAndersen.BlazorGames.Site", "src\DevAndersen.BlazorGames.Site\DevAndersen.BlazorGames.Site.csproj", "{6CD03038-0F0F-4F68-A0B6-BF8A155F5CD5}"
