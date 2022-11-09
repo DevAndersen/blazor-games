@@ -1,7 +1,7 @@
 using Blazored.LocalStorage;
 using DevAndersen.BlazorGames.Core.Games;
-using DevAndersen.BlazorGames.Site.Services.Abstractions;
 using DevAndersen.BlazorGames.Site.Services;
+using DevAndersen.BlazorGames.Site.Services.Abstractions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();

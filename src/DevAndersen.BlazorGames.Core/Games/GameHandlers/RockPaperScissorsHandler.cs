@@ -1,6 +1,4 @@
-﻿using DevAndersen.BlazorGames.Core.Games;
-
-namespace DevAndersen.BlazorGames.Core.Games.GameHandlers;
+﻿namespace DevAndersen.BlazorGames.Core.Games.GameHandlers;
 
 public class RockPaperScissorsHandler : GameHandler
 {

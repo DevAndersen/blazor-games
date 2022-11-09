@@ -1,6 +1,4 @@
-﻿using DevAndersen.BlazorGames.Core.Players;
-
-namespace DevAndersen.BlazorGames.Core.Messaging;
+﻿namespace DevAndersen.BlazorGames.Core.Messaging;
 
 public class Message
 {
