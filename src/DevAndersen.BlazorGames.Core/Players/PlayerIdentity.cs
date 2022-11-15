@@ -17,7 +17,7 @@ public class PlayerIdentity : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Necessary for deserialization to work.
+    /// Necessary in order for deserialization to work.
     /// </summary>
     public PlayerIdentity()
     {
