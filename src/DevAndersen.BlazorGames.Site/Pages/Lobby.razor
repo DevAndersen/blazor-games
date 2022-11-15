@@ -42,11 +42,12 @@
         }
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         if (Identity != null)
         {
             gameLobby.RemovePlayerFromQueue(Identity.Id);
         }
+        base.Dispose();
     }
 }

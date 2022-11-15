@@ -23,7 +23,7 @@ public abstract class BasePage : ComponentBase, IDisposable
     {
         base.OnInitialized();
         MainLayout?.UpdatePageTitle(PageTitle);
-        onBeforeUnloadHandler = new OnBeforeUnloadHandler(JsRuntime, () => OnLeavePage());
+        onBeforeUnloadHandler = new OnBeforeUnloadHandler(JsRuntime, OnLeavePage);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

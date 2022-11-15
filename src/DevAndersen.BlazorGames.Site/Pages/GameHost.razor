@@ -1,7 +1,6 @@
 ﻿@page "/games/{GameId:guid}"
 @using DevAndersen.BlazorGames.Core.Games
 @using DevAndersen.BlazorGames.Core.Games.GameHandlers
-@using DevAndersen.BlazorGames.Site.Interop;
 @using DevAndersen.BlazorGames.Site.Pages.Games
 @using DevAndersen.BlazorGames.Site.ViewExtensions
 @inherits BasePage
@@ -85,7 +84,7 @@
 
     public override void Dispose()
     {
-        base.Dispose();
         DisconnectFromGame();
+        base.Dispose();
     }
 }
