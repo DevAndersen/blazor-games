@@ -50,8 +50,9 @@
         }
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
+        base.Dispose();
         if (Identity != null)
         {
             Identity.PropertyChanged -= PropertyChangedAction;

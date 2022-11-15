@@ -39,6 +39,7 @@ public abstract class GameHandler
 
 	public virtual void StopGame()
 	{
+		Chat.SendSystemMessage("The game has ended.");
 	}
 
 	public void SendChatMessage(string message, PlayerIdentity? playerIdentity)

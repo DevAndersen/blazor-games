@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevAndersen.BlazorGames.Site", "src\DevAndersen.BlazorGames.Site\DevAndersen.BlazorGames.Site.csproj", "{6CD03038-0F0F-4F68-A0B6-BF8A155F5CD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevAndersen.BlazorGames.Site", "src\DevAndersen.BlazorGames.Site\DevAndersen.BlazorGames.Site.csproj", "{6CD03038-0F0F-4F68-A0B6-BF8A155F5CD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevAndersen.BlazorGames.Core", "src\DevAndersen.BlazorGames.Core\DevAndersen.BlazorGames.Core.csproj", "{D132B38F-0B90-4997-8FBF-CF94E1A5FAD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevAndersen.BlazorGames.Core", "src\DevAndersen.BlazorGames.Core\DevAndersen.BlazorGames.Core.csproj", "{D132B38F-0B90-4997-8FBF-CF94E1A5FAD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
