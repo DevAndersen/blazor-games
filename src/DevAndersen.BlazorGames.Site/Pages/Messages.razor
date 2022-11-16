@@ -3,7 +3,7 @@
 <div class="bg-dark rounded-1 border  border-secondary h-100">
     <div class="d-flex flex-column h-100">
         <div class="border-secondary border-bottom text-center fw-bold">Messages</div>
-        @if (Handler.HasChatSupport)
+        @if (Handler.HasChatSupport && CanViewChat)
         {
             <div class="border-secondary border-bottom text-center d-flex">
                 @foreach (MessageTab tab in Enum.GetValues<MessageTab>())
@@ -42,7 +42,7 @@
                 }
             </div>
         </div>
-        @if (Handler.HasChatSupport && currentTab != MessageTab.System)
+        @if (Handler.HasChatSupport && CanViewChat && currentTab != MessageTab.System)
         {
             <div class="p-2">
                 <div class="input-group">
@@ -62,6 +62,9 @@
     [Parameter]
     public PlayerIdentity Identity { get; set; } = default!;
 
+    [Parameter]
+    public bool CanViewChat { get; set; }
+
     public string ChatMessage { get; set; }
 
     private MessageTab currentTab;
@@ -69,6 +72,15 @@
     public Messages()
     {
         ChatMessage = string.Empty;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (!CanViewChat)
+        {
+            currentTab = MessageTab.System;
+        }
     }
 
     private void SendMessage()
@@ -96,11 +108,19 @@
 
     private string GetMessageDirectionClasses(IMessageSender sender)
     {
-        return sender is SystemMessageSender
-            ? "w-100 bg-secondary text-center"
-            :  IsSenderSelf(sender)
-                ? "w-75 bg-success"
-                : "w-75 bg-primary float-end";
+        if (sender is SystemMessageSender systemSender)
+        {
+            if (systemSender.MessageLevel == MessageLevel.Debug)
+            {
+                return "w-100 bg-info text-center";
+            }
+            return "w-100 bg-secondary text-center";
+        }
+        else if (IsSenderSelf(sender))
+        {
+            return "w-75 bg-success";
+        }
+        return "w-75 bg-primary float-end";
     }
 
     private string GetMessageSenderDirectionClasses(IMessageSender sender)
@@ -108,8 +128,8 @@
         return sender is SystemMessageSender
             ? "d-none"
             : IsSenderSelf(sender)
-                ? ""
-            :    "text-end";
+                ? string.Empty
+            : "text-end";
     }
 
     private string GetSenderName(IMessageSender sender)
@@ -123,7 +143,7 @@
     {
         return shouldBeSpaced
             ? "pb-2"
-            : "";
+            : string.Empty;
     }
 
     private IEnumerable<KeyValuePair<IMessageSender, string[]>> FilterMessagesForCurrentTab(IEnumerable<KeyValuePair<IMessageSender, string[]>> groupedMessages)

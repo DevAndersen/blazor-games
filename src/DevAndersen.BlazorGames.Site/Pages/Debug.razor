@@ -1,0 +1,57 @@
+﻿@page "/debug"
+@using DevAndersen.BlazorGames.Core.Games;
+@using DevAndersen.BlazorGames.Site.ViewExtensions;
+@inherits BasePage
+@inject GameLobby GameLobby
+@implements IDisposable
+
+<h3>Queues</h3>
+
+@foreach (var item in GameLobby.GetQueue())
+{
+    <div>@item.Key | @item.Value.Name</div>
+}
+
+<h3>Games</h3>
+
+@foreach (var item in GameLobby.GetGames())
+{
+    <div>@item.Key | @item.Value.GameDefinition.Name | @item.Value.State</div>
+}
+
+@code
+{
+    private bool keepUpdating = true;
+
+    public override string PageTitle => "Debug";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            _ = Update();
+        }
+    }
+
+    private async Task Update()
+    {
+        while (keepUpdating)
+        {
+            await Task.Delay(1000);
+            StateHasChanged();
+        }
+    }
+
+    public override void OnLeavePage()
+    {
+        base.OnLeavePage();
+        keepUpdating = false;
+    }
+
+    public override void Dispose()
+    {
+        keepUpdating = false;
+        base.Dispose();
+    }
+}

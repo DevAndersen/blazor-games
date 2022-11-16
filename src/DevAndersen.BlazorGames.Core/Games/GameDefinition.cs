@@ -2,19 +2,17 @@
 
 public class GameDefinition
 {
-    public GameIdentity Identity { get; }
+    public GameIdentity Identity { get; init; }
 
-    public required int PlayersNeeded { get; init; }
+    public string Name { get; init; }
 
-    public required string Name { get; init; }
+    public int PlayersNeeded { get; init; }
 
-    public required string TextIcon { get; init; }
-
-    public string Page => $"/games/{(int)Identity}";
-
-    private GameDefinition(GameIdentity identity)
+    public GameDefinition(GameIdentity identity, string name, int playersNeeded)
     {
         Identity = identity;
+        Name = name;
+        PlayersNeeded = playersNeeded;
     }
 
     public static GameDefinition GetDefinition(GameIdentity identity)
@@ -27,24 +25,13 @@ public class GameDefinition
         return GameDefinitions.Values;
     }
 
-    public static IReadOnlyDictionary<GameIdentity, GameDefinition> GameDefinitions { get; } = Enum.GetValues<GameIdentity>()
-        .ToDictionary(
+    public static IReadOnlyDictionary<GameIdentity, GameDefinition> GameDefinitions { get; } = Enum.GetValues<GameIdentity>().ToDictionary(
         k => k,
         CreateDefinition);
 
     private static GameDefinition CreateDefinition(GameIdentity identity) => identity switch
     {
-        GameIdentity.RockPaperScissors => new GameDefinition(identity)
-        {
-            PlayersNeeded = 2,
-            Name = "Rock paper scissors",
-            TextIcon = new string(new char[]
-            {
-                (char)55358, (char)57000, // Rock emoji
-                (char)55357, (char)56540, // Scroll emoji
-                (char)9986, (char)65039   // Scissors emoji
-            })
-        },
+        GameIdentity.RockPaperScissors => new GameDefinition(identity, "Rock paper scissors", 2),
         _ => throw new ArgumentOutOfRangeException($"No game matches identity '{identity}'.")
     };
 }

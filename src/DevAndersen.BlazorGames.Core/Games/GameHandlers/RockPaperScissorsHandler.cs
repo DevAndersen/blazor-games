@@ -1,4 +1,6 @@
-﻿namespace DevAndersen.BlazorGames.Core.Games.GameHandlers;
+﻿using DevAndersen.BlazorGames.Core.Messaging;
+
+namespace DevAndersen.BlazorGames.Core.Games.GameHandlers;
 
 public class RockPaperScissorsHandler : GameHandler
 {
@@ -12,7 +14,7 @@ public class RockPaperScissorsHandler : GameHandler
 
     public override void StartGame()
     {
-        throw new NotImplementedException();
+        Chat.SendSystemMessage("Starting a game of rock paper scissors", MessageLevel.Debug);
     }
 
     public enum RockPaperScissorsChoice
@@ -31,7 +33,7 @@ public class RockPaperScissorsHandler : GameHandler
 
     public void MakeChoice(Guid playerId, RockPaperScissorsChoice choice)
     {
-        if (Choices.Keys.Contains(playerId))
+        if (IsInputFromUserInvalid(playerId) || Choices.ContainsKey(playerId))
         {
             return;
         }

@@ -1,11 +1,11 @@
 ﻿using DevAndersen.BlazorGames.Core.Games.GameHandlers;
+using System.Collections.ObjectModel;
 
 namespace DevAndersen.BlazorGames.Core.Games;
 
 public class GameLobby
 {
     public event Action<Guid, IEnumerable<Guid>> JoinGameEvent = default!;
-
     private readonly Dictionary<Guid, GameDefinition> queue;
     private readonly Dictionary<Guid, GameHandler> gameHandlers;
 
@@ -14,6 +14,10 @@ public class GameLobby
         queue = new Dictionary<Guid, GameDefinition>();
         gameHandlers = new Dictionary<Guid, GameHandler>();
     }
+
+    public ReadOnlyDictionary<Guid, GameDefinition> GetQueue() => queue.AsReadOnly();
+
+    public ReadOnlyDictionary<Guid, GameHandler> GetGames() => gameHandlers.AsReadOnly();
 
     #region Queue
 

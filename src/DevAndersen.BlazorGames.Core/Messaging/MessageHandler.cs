@@ -4,7 +4,7 @@ namespace DevAndersen.BlazorGames.Core.Messaging;
 
 public class MessageHandler
 {
-    public bool HasChatSupport { get; }
+    public bool HasChatSupport { get; init; }
 
     private readonly UpdateNotifier updateNotifier;
     private readonly List<Message> chatMessages;
@@ -26,7 +26,12 @@ public class MessageHandler
 
     public void SendSystemMessage(string message)
     {
-        SendMessage(message, new SystemMessageSender(SystemMessageSender.MessageLevel.Information));
+        SendMessage(message, new SystemMessageSender(MessageLevel.Information));
+    }
+
+    public void SendSystemMessage(string message, MessageLevel messageLevel)
+    {
+        SendMessage(message, new SystemMessageSender(messageLevel));
     }
 
     private void SendMessage(string message, IMessageSender sender)

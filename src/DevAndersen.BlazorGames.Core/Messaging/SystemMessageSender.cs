@@ -2,24 +2,18 @@
 
 public record SystemMessageSender : IMessageSender
 {
-    internal readonly MessageLevel messageLevel;
+    public MessageLevel MessageLevel { get; }
 
     public SystemMessageSender(MessageLevel messageLevel)
     {
-        this.messageLevel = messageLevel;
+        this.MessageLevel = messageLevel;
     }
 
     public bool Equals(IMessageSender? other)
     {
         return other is SystemMessageSender sender
-            && sender.messageLevel == messageLevel;
+            && sender.MessageLevel == MessageLevel;
     }
 
-    public string GetSenderIdentity() => messageLevel.ToString();
-
-    public enum MessageLevel
-    {
-        Information,
-        Debug
-    }
+    public string GetSenderIdentity() => MessageLevel.ToString();
 }

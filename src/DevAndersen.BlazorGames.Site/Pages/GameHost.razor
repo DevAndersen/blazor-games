@@ -13,14 +13,11 @@
     @if (Identity != null && Handler != null)
     {
         <div class="col-12 col-sm-8 bg-secondary flex-fill">
-            <DynamicComponent Type="@typeof(RockPaperScissors)" Parameters="@parameters" />
+            <DynamicComponent Type=GetView() Parameters=parameters />
         </div>
-        @if (Handler?.GameDefinition.PlayersNeeded > 1)
-        {
-            <div class="col-12 col-sm-4 px-2">
-                <Messages Handler="Handler.Chat" Identity="Identity" />
-            </div>
-        }
+        <div class="col-12 col-sm-4 px-2">
+            <Messages Handler=Handler.Chat Identity=Identity CanViewChat=IsParticipating() />
+        </div>
     }
 </div>
 
@@ -53,6 +50,7 @@
                 };
 
                 Handler.UpdateNotifier.OnUpdate += Update;
+                Handler.JoinGame(Identity);
                 StateHasChanged();
             }
             else
@@ -81,6 +79,18 @@
             Handler.StopGame();
         }
     }
+
+    private Type GetView()
+    {
+        GameIdentity? gameIdentity = gameLobby.GetGameHandler(GameId)?.GameIdentity;
+        return gameIdentity switch
+        {
+            GameIdentity.RockPaperScissors => typeof(RockPaperScissors),
+            _ => throw new InvalidOperationException("No game view defined for game")
+        };
+    }
+
+    private bool IsParticipating() => Identity != null && (Handler?.PlayerIds.Contains(Identity.Id) ?? false);
 
     public override void Dispose()
     {
