@@ -12,7 +12,7 @@
 <div class="container-lg p-2 d-flex h-100 flex-wrap">
     @if (Identity != null && Handler != null)
     {
-        <div class="col-12 col-sm-8 bg-secondary flex-fill">
+        <div class="col-12 col-sm-8 bg-secondary flex-fill game-container" data-game-ended=@(Handler.State == GameState.Ended)>
             <DynamicComponent Type=GetView() Parameters=parameters />
         </div>
         <div class="col-12 col-sm-4 px-2">

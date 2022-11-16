@@ -44,5 +44,6 @@ public abstract class BasePage : ComponentBase, IDisposable
 
     public virtual void Dispose()
     {
+        GC.SuppressFinalize(this);
     }
 }

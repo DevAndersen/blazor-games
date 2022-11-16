@@ -1,0 +1,10 @@
+﻿.game-container
+{
+    transition: filter 1s;
+}
+
+.game-container[data-game-ended]
+{
+    filter: grayscale(90%);
+    pointer-events: none;
+}
