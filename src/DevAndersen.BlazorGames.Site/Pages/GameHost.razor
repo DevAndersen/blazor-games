@@ -12,7 +12,7 @@
 <div class="container-lg p-2 d-flex h-100 flex-wrap">
     @if (Identity != null && Handler != null)
     {
-        <div class="col-12 col-sm-8 bg-secondary flex-fill game-container" data-game-ended=@(Handler.State == GameState.Ended)>
+        <div class="col-12 col-sm-8 bg-secondary flex-fill game-container" data-game-ended=@(Handler.State == GameState.Ended) data-spectator=@(!IsParticipating())>
             <DynamicComponent Type=GetView() Parameters=parameters />
         </div>
         <div class="col-12 col-sm-4 px-2">
@@ -45,8 +45,8 @@
             {
                 parameters = new Dictionary<string, object>
                 {
-                    ["Handler"] = Handler,
-                    ["Identity"] = Identity
+                    [nameof(GamePage<GameHandler>.Handler)] = Handler,
+                    [nameof(GamePage<GameHandler>.Identity)] = Identity
                 };
 
                 Handler.UpdateNotifier.OnUpdate += Update;
@@ -76,7 +76,11 @@
         if (Handler != null)
         {
             Handler.UpdateNotifier.OnUpdate -= Update;
-            Handler.StopGame();
+
+            if (IsParticipating())
+            {
+                Handler.StopGame();
+            }
         }
     }
 
@@ -86,7 +90,7 @@
         return gameIdentity switch
         {
             GameIdentity.RockPaperScissors => typeof(RockPaperScissors),
-            _ => throw new InvalidOperationException("No game view defined for game")
+            _ => throw new InvalidOperationException($"No game view defined for game '{gameIdentity}'.")
         };
     }
 

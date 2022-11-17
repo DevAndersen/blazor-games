@@ -18,22 +18,23 @@
                 @{
                     IMessageSender? lastSender = null;
 
-                    var groupedMessages = Handler.GetGroupedChatMessages();
-                    var filteredMessages = FilterMessagesForCurrentTab(groupedMessages);
+                    var messageGroup = Handler.GetGroupedChatMessages();
+                    var filteredMessages = FilterMessagesForCurrentTab(messageGroup);
 
-                    foreach ((IMessageSender sender, string[] messages) in filteredMessages)
+                    foreach ((IMessageSender sender, string[] messages, DateTime timestamp) in filteredMessages)
                     {
                         <div class="p-1 col-12">
                             @if (lastSender != sender)
                             {
-                                <div class="pb-1 opacity-50 @GetMessageSenderDirectionClasses(sender)">@GetSenderName(sender)</div>
+                                <div class="pb-1 opacity-50 message-sender" data-sender=@GetSender(sender)>@GetSenderName(sender) (<span class="text-info">@timestamp.ToString("HH:mm:ss")</span>)</div>
                             }
-                            <div class="p-1 rounded @GetMessageDirectionClasses(sender)">
+
+                            <div class="p-1 rounded message" data-sender=@GetSender(sender) data-system-level=@((sender as SystemMessageSender)?.MessageLevel)>
                                 @for (int i = 0; i < messages.Length; i++)
                                 {
                                     string message = messages[i];
-                                    string paddingClass = GetMessagePadding(i != messages.Length - 1);
-                                    <div class="text-wrap text-break @paddingClass">@message</div>
+                                    bool padding = i != messages.Length - 1;
+                                    <div class="text-wrap text-break message-padding" data-padding=@padding>@message</div>
                                 }
                             </div>
                         </div>
@@ -100,58 +101,29 @@
         }
     }
 
-    private bool IsSenderSelf(IMessageSender sender)
-    {
-        return sender is PlayerMessageSender playerSender
-            && playerSender.PlayerId == Identity.Id;
-    }
+    private bool IsSenderSelf(IMessageSender sender) => (sender as PlayerMessageSender)?.PlayerId == Identity.Id;
 
-    private string GetMessageDirectionClasses(IMessageSender sender)
+    private string GetSenderName(IMessageSender sender) => IsSenderSelf(sender) ? "You" : sender.GetSenderIdentity();
+
+    private string GetSender(IMessageSender sender)
     {
-        if (sender is SystemMessageSender systemSender)
+        if (sender is SystemMessageSender)
         {
-            if (systemSender.MessageLevel == MessageLevel.Debug)
-            {
-                return "w-100 bg-info text-center";
-            }
-            return "w-100 bg-secondary text-center";
+            return "system";
         }
         else if (IsSenderSelf(sender))
         {
-            return "w-75 bg-success";
+            return "self";
         }
-        return "w-75 bg-primary float-end";
+        return "player";
     }
 
-    private string GetMessageSenderDirectionClasses(IMessageSender sender)
-    {
-        return sender is SystemMessageSender
-            ? "d-none"
-            : IsSenderSelf(sender)
-                ? string.Empty
-            : "text-end";
-    }
-
-    private string GetSenderName(IMessageSender sender)
-    {
-        return IsSenderSelf(sender)
-            ? "You"
-            : sender.GetSenderIdentity();
-    }
-
-    private string GetMessagePadding(bool shouldBeSpaced)
-    {
-        return shouldBeSpaced
-            ? "pb-2"
-            : string.Empty;
-    }
-
-    private IEnumerable<KeyValuePair<IMessageSender, string[]>> FilterMessagesForCurrentTab(IEnumerable<KeyValuePair<IMessageSender, string[]>> groupedMessages)
+    private IEnumerable<MessageGroup> FilterMessagesForCurrentTab(IEnumerable<MessageGroup> groupedMessages)
     {
         return currentTab switch
         {
-            MessageTab.Chat => groupedMessages.Where(g => g.Key is PlayerMessageSender),
-            MessageTab.System => groupedMessages.Where(g => g.Key is SystemMessageSender),
+            MessageTab.Chat => groupedMessages.Where(g => g.Sender is PlayerMessageSender),
+            MessageTab.System => groupedMessages.Where(g => g.Sender is SystemMessageSender),
             _ => groupedMessages
         };
     }

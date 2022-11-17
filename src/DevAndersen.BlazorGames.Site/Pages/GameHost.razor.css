@@ -8,3 +8,8 @@
     filter: grayscale(90%);
     pointer-events: none;
 }
+
+.game-container[data-spectator]
+{
+    pointer-events: none;
+}

@@ -16,3 +16,47 @@
 {
     background-color: var(--bs-secondary);
 }
+
+.message-sender[data-sender='system']
+{
+    display: none;
+}
+
+.message-sender[data-sender='player']
+{
+    float: right;
+}
+
+.message[data-sender='system']
+{
+    width: 100%;
+    text-align: center;
+}
+
+.message[data-sender='player']
+{
+    width: 75%;
+    float: right;
+    background-color: var(--bs-success);
+}
+
+.message[data-sender='self']
+{
+    width: 75%;
+    background-color: var(--bs-primary);
+}
+
+.message[data-system-level="information" i]
+{
+    background-color: var(--bs-gray);
+}
+
+.message[data-system-level="debug" i]
+{
+    background-color: var(--bs-purple);
+}
+
+.message-padding[data-padding]
+{
+    padding-bottom: 0.5rem;
+}

@@ -19,5 +19,5 @@ public record PlayerMessageSender : IMessageSender
             && sender.identity.Id == identity.Id;
     }
 
-    public string GetSenderIdentity() => identity.Username ?? identity.Id.ToString();
+    public string GetSenderIdentity() => identity.Username ?? $"[{identity.Id.ToString()[..8]}]";
 }

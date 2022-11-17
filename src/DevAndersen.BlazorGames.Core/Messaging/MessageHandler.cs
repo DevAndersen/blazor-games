@@ -45,7 +45,7 @@ public class MessageHandler
         return chatMessages;
     }
 
-    public IEnumerable<KeyValuePair<IMessageSender, string[]>> GetGroupedChatMessages()
+    public IEnumerable<MessageGroup> GetGroupedChatMessages()
     {
         IEnumerable<Message> chatMessages = GetChatMessages();
 
@@ -56,21 +56,37 @@ public class MessageHandler
 
             while (keepGoing)
             {
+                var timeOfFirstMessageInBlock = chatMessages.Skip(index).First().Timestamp;
                 IMessageSender sender = chatMessages.Skip(index).First().Sender;
 
-                string[] messages = chatMessages
-                    .Skip(index)
-                    .TakeWhile(x => x.Sender.Equals(sender))
-                    .Select(y => y.Text)
-                    .ToArray();
+                if (sender is SystemMessageSender)
+                {
+                    string[] message = chatMessages
+                        .Skip(index)
+                        .Take(1)
+                        .Select(x => x.Text)
+                        .ToArray();
 
-                index += messages.Length;
+                    index++;
+                    yield return new MessageGroup(sender, message, timeOfFirstMessageInBlock);
+                }
+                else
+                {
+                    string[] messages = chatMessages
+                        .Skip(index)
+                        .TakeWhile(x => x.Sender.Equals(sender) && (x.Timestamp - timeOfFirstMessageInBlock) < TimeSpan.FromSeconds(5))
+                        .Select(y => y.Text)
+                        .ToArray();
+
+                    index += messages.Length;
+                    yield return new MessageGroup(sender, messages, timeOfFirstMessageInBlock);
+                }
+
                 if (index >= chatMessages.Count())
                 {
                     keepGoing = false;
                 }
 
-                yield return new KeyValuePair<IMessageSender, string[]>(sender, messages);
             }
         }
     }
